@@ -1,0 +1,52 @@
+/* Загальні стилі для всього сайту */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Центруємо контент по ширині */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Кнопки */
+button {
+  background-color: #007B8F;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #005f6b;
+}
+
+/* Поля форми */
+input, select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: #007B8F;
+}
+
+/* Посилання */
+a {
+  color: #007B8F;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

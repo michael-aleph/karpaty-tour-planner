@@ -1,0 +1,42 @@
+# === Node.js ===
+node_modules/
+.env
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Vite ===
+dist/
+
+# === Build output ===
+build/
+out/
+
+# === Coverage ===
+coverage/
+
+# === macOS system files ===
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# === Windows system files ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# === VSCode ===
+.vscode/
+*.code-workspace
+
+# === JetBrains IDEs ===
+.idea/
+*.iml
+
+# === Temporary ===
+*.tmp
+*.swp
+
+# === pnpm / Bun (якщо не використовуєш — можна прибрати) ===
+pnpm-lock.yaml
+bun.lockb
