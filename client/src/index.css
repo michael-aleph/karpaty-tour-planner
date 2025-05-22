@@ -1,10 +1,33 @@
+:root {
+  --bg: #f2f3f5;           /* Мʼякший, не білий фон */
+  --card-bg: #ffffff;      /* Чисті картки */
+  --text: #2c2f33;         /* Глибокий сірий текст (не чорний) */
+  --btn-bg: #5865f2;       /* Той самий Blurple */
+  --btn-hover: #4752c4;
+  --btn-text: #ffffff;
+  --link: #5865f2;
+  --link-hover: #4752c4;
+}
+
+[data-theme='dark'] {
+  --bg: #36393f;         /* Основний фон */
+  --card-bg: #2f3136;    /* Фон карток */
+  --text: #dcddde;       /* Основний текст */
+  --btn-bg: #5865f2;     /* Кнопки (Blurple) */
+  --btn-hover: #4752c4;  /* Ховер для кнопок */
+  --btn-text: #ffffff;   /* Текст на кнопках */
+  --link: #00b0f4;       /* Посилання */
+  --link-hover: #00cfff; /* Ховер для посилань */
+}
+
 /* Загальні стилі для всього сайту */
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f9fa;
-  color: #333;
+  background-color: var(--bg);
+  color: var(--text);
   line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Центруємо контент по ширині */
@@ -16,17 +39,18 @@ body {
 
 /* Кнопки */
 button {
-  background-color: #007B8F;
-  color: white;
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-weight: 500;
 }
 
 button:hover {
-  background-color: #005f6b;
+  background-color: var(--btn-hover);
 }
 
 /* Поля форми */
@@ -35,18 +59,22 @@ input, select {
   border: 1px solid #ccc;
   border-radius: 6px;
   outline: none;
+  background-color: var(--card-bg);
+  color: var(--text);
 }
 
 input:focus, select:focus {
-  border-color: #007B8F;
+  border-color: var(--btn-bg);
 }
 
 /* Посилання */
 a {
-  color: #007B8F;
+  color: var(--link);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 a:hover {
   text-decoration: underline;
+  color: var(--link-hover);
 }

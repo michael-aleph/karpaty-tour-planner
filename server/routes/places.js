@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const placesController = require('../controllers/placesController');
-const { validatePlace } = require('../validators/placeValidator');
+const { validatePlace, validatePlaceUpdate } = require('../validators/placeValidator');
 const validationMiddleware = require('../middlewares/validationMiddleware');
 
 // GET /api/places
@@ -14,7 +14,7 @@ router.get('/:id', placesController.getPlaceById);
 router.post('/', validatePlace, validationMiddleware, placesController.createPlace);
 
 // PUT /api/places/:id
-router.put('/:id', validatePlace, validationMiddleware, placesController.updatePlace);
+router.put('/:id', validatePlaceUpdate, validationMiddleware, placesController.updatePlace);
 
 // DELETE /api/places/:id
 router.delete('/:id', placesController.deletePlace);

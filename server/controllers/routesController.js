@@ -10,6 +10,9 @@ exports.createRoute = async (req, res, next) => {
     duration_days,
     budget_min,
     budget_max,
+    image_url,
+    content_ua,
+    content_en,
     places,
     tags
   } = req.body;
@@ -21,8 +24,8 @@ exports.createRoute = async (req, res, next) => {
 
     const result = await client.query(
       `INSERT INTO routes
-       (name_ua, name_en, description_ua, description_en, duration_days, budget_min, budget_max)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+      (name_ua, name_en, description_ua, description_en, duration_days, budget_min, budget_max, image_url, content_ua, content_en)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
       [
         name_ua,
@@ -31,7 +34,10 @@ exports.createRoute = async (req, res, next) => {
         description_en,
         duration_days,
         budget_min,
-        budget_max
+        budget_max,
+        image_url,
+        content_ua,
+        content_en
       ]
     );
 
@@ -211,34 +217,72 @@ exports.updateRoute = async (req, res, next) => {
     duration_days,
     budget_min,
     budget_max,
+    image_url,
+    content_ua,
+    content_en,
     places,
     tags // додано
   } = req.body;
+
+  // Видалити порожні рядки, щоб не затерти поля пустотою
+  for (let key in req.body) {
+    if (req.body[key] === "") {
+      delete req.body[key];
+    }
+  }
 
   const client = await pool.connect();
 
   try {
     await client.query('BEGIN');
+    const currentRoute = await client.query('SELECT * FROM routes WHERE id = $1', [id]);
+    if (currentRoute.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ message: 'Маршрут не знайдено' });
+    }
+
+    const existing = currentRoute.rows[0];
+
+
+    // 🔹 Взяти або нове значення, або залишити старе
+    const updatedRoute = {
+      name_ua: req.body.name_ua ?? existing.name_ua,
+      name_en: req.body.name_en ?? existing.name_en,
+      description_ua: req.body.description_ua ?? existing.description_ua,
+      description_en: req.body.description_en ?? existing.description_en,
+      duration_days: req.body.duration_days ?? existing.duration_days,
+      budget_min: req.body.budget_min ?? existing.budget_min,
+      budget_max: req.body.budget_max ?? existing.budget_max,
+      image_url: req.body.image_url ?? existing.image_url,
+      content_ua: req.body.content_ua ?? existing.content_ua,
+      content_en: req.body.content_en ?? existing.content_en,
+    };
 
     const result = await client.query(
       `UPDATE routes
-       SET name_ua = $1,
-           name_en = $2,
-           description_ua = $3,
-           description_en = $4,
-           duration_days = $5,
-           budget_min = $6,
-           budget_max = $7
-       WHERE id = $8
-       RETURNING *`,
+      SET name_ua = $1,
+          name_en = $2,
+          description_ua = $3,
+          description_en = $4,
+          duration_days = $5,
+          budget_min = $6,
+          budget_max = $7,
+          image_url = $8,
+          content_ua = $9,
+          content_en = $10
+      WHERE id = $11
+      RETURNING *`,
       [
-        name_ua,
-        name_en,
-        description_ua,
-        description_en,
-        duration_days,
-        budget_min,
-        budget_max,
+        updatedRoute.name_ua,
+        updatedRoute.name_en,
+        updatedRoute.description_ua,
+        updatedRoute.description_en,
+        updatedRoute.duration_days,
+        updatedRoute.budget_min,
+        updatedRoute.budget_max,
+        updatedRoute.image_url,
+        updatedRoute.content_ua,
+        updatedRoute.content_en,
         id
       ]
     );

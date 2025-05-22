@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getUkrainianDaysLabel, getEnglishDaysLabel } from '../utils/languageUtils';
+import './RouteCard.css';
 
 function RouteCard({ route }) {
   const { language } = useLanguage();
@@ -13,52 +14,31 @@ function RouteCard({ route }) {
     language === 'ua' ? getUkrainianDaysLabel(n) : getEnglishDaysLabel(n);
 
   return (
-    <div style={{
-      border: '1px solid #ccc',
-      borderRadius: '8px',
-      padding: '1rem',
-      marginBottom: '1rem',
-      backgroundColor: '#fff',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-    }}>
+    <div className="route-card">
       {route.image_url && (
         <img
           src={route.image_url}
           alt={name}
-          style={{
-            width: '100%',
-            height: '180px',
-            objectFit: 'cover',
-            borderRadius: '6px',
-            marginBottom: '0.5rem',
-          }}
+          className="route-card-image"
         />
       )}
 
-      <h3 style={{ marginTop: 0 }}>
-        <Link to={`/routes/${route.id}`} style={{ textDecoration: 'none', color: '#007B8F' }}>
+      <h3 className="route-card-title">
+        <Link to={`/routes/${route.id}`} className="route-card-link">
           {name}
         </Link>
       </h3>
 
-      <p style={{ marginBottom: '0.5rem' }}>{description}</p>
+      <p className="route-card-description">{description}</p>
 
-      <p style={{ fontSize: '0.9rem', color: '#555' }}>
+      <p className="route-card-meta">
         ⏱ {route.duration_days} {getDaysLabel(route.duration_days)} — 💰 {route.budget_min}–{route.budget_max} {unitCurrency}
       </p>
 
       {route.tags?.length > 0 && (
-        <div style={{ marginTop: '0.5rem' }}>
+        <div className="route-card-tags">
           {route.tags.map((tag) => (
-            <span key={tag.id} style={{
-              display: 'inline-block',
-              padding: '0.2rem 0.6rem',
-              marginRight: '0.5rem',
-              fontSize: '0.75rem',
-              backgroundColor: '#e0f0f3',
-              color: '#007B8F',
-              borderRadius: '999px',
-            }}>
+            <span className="route-tag" key={tag.id}>
               {language === 'ua' ? tag.name_ua : tag.name_en}
             </span>
           ))}

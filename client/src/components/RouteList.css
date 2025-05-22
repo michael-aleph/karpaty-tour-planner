@@ -1,0 +1,48 @@
+.route-list {
+  margin-top: 1rem;
+}
+
+.route-list-form {
+  margin-bottom: 1rem;
+}
+
+.route-list-form input,
+.route-list-form select {
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.tag-filter-group {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag-filter-group label {
+  margin-right: 1rem;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 1rem;
+}
+
+.no-results {
+  margin-top: 1rem;
+  font-style: italic;
+}
+
+.route-list-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.route-card-link {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.route-card-link:hover {
+  text-decoration: underline;
+  color: var(--link-hover);
+}

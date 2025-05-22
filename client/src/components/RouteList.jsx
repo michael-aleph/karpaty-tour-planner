@@ -3,8 +3,7 @@ import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import RouteCard from '../components/RouteCard';
-
-
+import './RouteList.css';
 
 function RouteList() {
   const { language } = useLanguage();
@@ -75,7 +74,7 @@ function RouteList() {
       console.error('Помилка при отриманні маршрутів:', error);
     }
   };
-  
+
 
   // завантаження при першому рендері
   useEffect(() => {
@@ -112,15 +111,15 @@ function RouteList() {
   };
 
   return (
-    <div>
-      <h2>{t.title[language]}</h2>      
-      <form onSubmit={handleSearch} style={{ marginBottom: '1rem' }}>
+    <div className="route-list">
+      <h2>{t.title[language]}</h2>
+  
+      <form onSubmit={handleSearch} className="route-list-form">
         <input
           type="text"
           placeholder={t.searchPlaceholder[language]}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ marginRight: '0.5rem' }}
         />
         <input
           type="number"
@@ -128,7 +127,6 @@ function RouteList() {
           value={minBudget}
           onChange={(e) => setMinBudget(e.target.value)}
           min="0"
-          style={{ marginRight: '0.5rem' }}
         />
         <input
           type="number"
@@ -136,22 +134,21 @@ function RouteList() {
           value={maxBudget}
           onChange={(e) => setMaxBudget(e.target.value)}
           min="0"
-          style={{ marginRight: '0.5rem' }}
         />
-
+  
         <select
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
-          style={{ marginRight: '0.5rem' }}
         >
           <option value="">{t.durationLabel[language]}</option>
           {t.durationOptions[language].map((label, idx) => (
             <option key={idx} value={idx + 1}>{label}</option>
           ))}
         </select>
-        <div style={{ marginTop: '0.5rem', marginBottom: '1rem' }}>
+  
+        <div className="tag-filter-group">
           {availableTags.map((tag) => (
-            <label key={tag.id} style={{ marginRight: '1rem' }}>
+            <label key={tag.id}>
               <input
                 type="checkbox"
                 value={tag.id}
@@ -162,35 +159,25 @@ function RouteList() {
             </label>
           ))}
         </div>
-
-
+  
         <button type="submit">{t.submit[language]}</button>
       </form>
-
+  
       {error && (
-        <p style={{ color: 'red', marginBottom: '1rem' }}>
-          {error}
-        </p>
+        <p className="error-message">{error}</p>
       )}
-
+  
       {routes.length === 0 && (
-        <p style={{ marginTop: '1rem', fontStyle: 'italic' }}>
-          {t.noResults[language]}
-        </p>
+        <p className="no-results">{t.noResults[language]}</p>
       )}
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: '1rem',
-      }}>
+  
+      <div className="route-list-grid">
         {routes.map(route => (
           <RouteCard key={route.id} route={route} />
         ))}
       </div>
-      
     </div>
-  );
+  );  
 }
 
 export default RouteList;
