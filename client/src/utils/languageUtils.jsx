@@ -1,9 +1,9 @@
-export function getUkrainianDaysLabel(n) {
-  if (n === 1) return 'день';
-  if (n >= 2 && n <= 4) return 'дні';
-  return 'днів';
+export function getUkrainianHoursLabel(n) {
+  if (n === 1) return 'година';
+  if (n >= 2 && n <= 4) return 'години';
+  return 'годин';
 }
 
-export function getEnglishDaysLabel(n) {
-  return n === 1 ? 'day' : 'days';
+export function getEnglishHoursLabel(n) {
+  return n === 1 ? 'hour' : 'hours';
 }

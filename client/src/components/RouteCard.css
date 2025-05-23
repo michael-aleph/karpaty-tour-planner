@@ -51,7 +51,7 @@
   padding: 0.2rem 0.6rem;
   margin-right: 0.5rem;
   font-size: 0.75rem;
-  background-color: #e0f0f3;
-  color: #007B8F;
+  background-color: var(--link);
+  color: white;
   border-radius: 999px;
 }

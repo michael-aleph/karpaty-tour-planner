@@ -5,29 +5,37 @@ import { Moon, Sun } from 'lucide-react';
 import './Navbar.css';
 
 function Navbar() {
-  const { language } = useLanguage();
+  const { language, toggleLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
-
-  const t = {
-    home: {
-      ua: 'Головна',
-      en: 'Home',
-    },
-    routes: {
-      ua: 'Маршрути',
-      en: 'Routes',
-    },
-  };
 
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo">
-        🏕 {t.home[language]}
+        🏕 {language === 'ua' ? 'Головна' : 'Home'}
       </Link>
 
-      <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
-        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-      </button>
+      <div className="navbar-controls">
+        <div className="lang-switch">
+          <button
+            onClick={language === 'ua' ? () => {} : toggleLanguage}
+            className={`lang-option ${language === 'ua' ? 'active' : ''}`}
+          >
+            UA
+          </button>
+          <span className="lang-separator">|</span>
+          <button
+            onClick={language === 'en' ? () => {} : toggleLanguage}
+            className={`lang-option ${language === 'en' ? 'active' : ''}`}
+          >
+            EN
+          </button>
+        </div>
+
+        <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+          <Moon size={20} className={`theme-icon ${theme === 'light' ? 'visible' : 'hidden'}`} />
+          <Sun size={20} className={`theme-icon ${theme === 'dark' ? 'visible' : 'hidden'}`} />
+        </button>
+      </div>
     </nav>
   );
 }

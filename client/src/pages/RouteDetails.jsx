@@ -5,7 +5,6 @@ import rehypeRaw from 'rehype-raw';
 import ModalImage from 'react-modal-image';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
-import { getUkrainianDaysLabel, getEnglishDaysLabel } from '../utils/languageUtils';
 import './RouteDetails.css';
 
 const renderers = {
@@ -62,10 +61,6 @@ function RouteDetails() {
     return <div className="container">{language === 'ua' ? 'Завантаження...' : 'Loading...'}</div>;
   }
 
-  const getDaysLabel = (n) =>
-    language === 'ua' ? getUkrainianDaysLabel(n) : getEnglishDaysLabel(n);
-  const unitCurrency = language === 'ua' ? 'грн' : 'uah';
-
   return (
     <>
       <div
@@ -91,10 +86,6 @@ function RouteDetails() {
             </ReactMarkdown>
           </div>
         </div>
-  
-        <p className="route-meta">
-          ⏱ {route.duration_days} {getDaysLabel(route.duration_days)} — 💰 {route.budget_min}–{route.budget_max} {unitCurrency}
-        </p>
   
         {route.tags?.length > 0 && (
           <div className="route-tags">

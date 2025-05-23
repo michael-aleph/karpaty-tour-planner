@@ -1,4 +1,7 @@
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 999;
   background-color: var(--bg);
   border-bottom: 1px solid #ddd;
   padding: 1rem;
@@ -6,7 +9,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  backdrop-filter: blur(4px);
 }
+
 
 .navbar-logo {
   font-weight: bold;
@@ -15,21 +20,86 @@
   font-size: 1.1rem;
 }
 
-/* Кнопка з іконкою Moon/Sun */
+.navbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Перемикач мов */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.lang-option {
+  background: transparent;
+  border: none;
+  color: var(--link);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.lang-option:hover {
+  color: var(--btn-bg);
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}
+
+.lang-option.active {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border-radius: 6px;
+  cursor: default;
+  pointer-events: none;
+}
+
+.lang-separator {
+  margin: 0 0.3rem;
+  color: var(--text);
+  font-weight: 400;
+}
+
+/* Кнопка зміни теми */
 .theme-toggle {
+  position: relative;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text);
-  padding: 0.4rem;
-  border-radius: 50%;
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .theme-toggle:hover {
   background-color: rgba(0, 0, 0, 0.1);
   transform: rotate(20deg);
+}
+
+.theme-icon {
+  position: absolute;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-icon.visible {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.theme-icon.hidden {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
 }

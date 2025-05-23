@@ -9,8 +9,6 @@ function RouteList() {
   const { language } = useLanguage();
   const [routes, setRoutes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [minBudget, setMinBudget] = useState('');
-  const [maxBudget, setMaxBudget] = useState('');
   const [duration, setDuration] = useState('');
   const [availableTags, setAvailableTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -34,12 +32,8 @@ function RouteList() {
       en: 'Budget to',
     },
     durationLabel: {
-      ua: 'Всі тривалості',
-      en: 'All durations',
-    },
-    durationOptions: {
-      ua: ['1 день', '2 дні', '3 дні', '4 дні', '5 днів'],
-      en: ['1 day', '2 days', '3 days', '4 days', '5 days'],
+      ua: 'до годин',
+      en: 'up to hours'
     },
     submit: {
       ua: 'Знайти',
@@ -90,16 +84,7 @@ function RouteList() {
     e.preventDefault();
     setError('');
   
-    if (minBudget && maxBudget && parseInt(minBudget) > parseInt(maxBudget)) {
-      const message =
-        language === 'ua'
-          ? 'Мінімальний бюджет не може бути більшим за максимальний.'
-          : 'Minimum budget cannot be greater than maximum budget.';
-      setError(message);
-      return;
-    }
-  
-    fetchRoutes(searchTerm.trim(), minBudget.trim(), maxBudget.trim(), duration);
+    fetchRoutes(searchTerm.trim(), duration);
   };
   
   const handleTagChange = (tagId) => {
@@ -115,61 +100,60 @@ function RouteList() {
       <h2>{t.title[language]}</h2>
   
       <form onSubmit={handleSearch} className="route-list-form">
-        <input
-          type="text"
-          placeholder={t.searchPlaceholder[language]}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder={t.budgetMinPlaceholder[language]}
-          value={minBudget}
-          onChange={(e) => setMinBudget(e.target.value)}
-          min="0"
-        />
-        <input
-          type="number"
-          placeholder={t.budgetMaxPlaceholder[language]}
-          value={maxBudget}
-          onChange={(e) => setMaxBudget(e.target.value)}
-          min="0"
-        />
+        {/* 🔍 Пошук */}
+        <div className="form-field">
+          <label htmlFor="search-input">
+            {language === 'ua' ? 'Пошук маршруту' : 'Search route'}
+          </label>
+          <input
+            id="search-input"
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={language === 'ua' ? 'Напр., Довбуш' : 'e.g., Dovbush'}
+          />
+        </div>
   
-        <select
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
-        >
-          <option value="">{t.durationLabel[language]}</option>
-          {t.durationOptions[language].map((label, idx) => (
-            <option key={idx} value={idx + 1}>{label}</option>
-          ))}
-        </select>
+        {/* ⏱ Тривалість */}
+        <div className="form-field">
+          <label htmlFor="duration-input">
+            {language === 'ua' ? 'Тривалість до (годин)' : 'Max duration (hours)'}
+          </label>
+          <input
+            id="duration-input"
+            type="number"
+            min="1"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            placeholder={language === 'ua' ? 'Напр., 3' : 'e.g., 3'}
+          />
+        </div>
   
-        <div className="tag-filter-group">
-          {availableTags.map((tag) => (
-            <label key={tag.id}>
-              <input
-                type="checkbox"
-                value={tag.id}
-                checked={selectedTags.includes(tag.id)}
-                onChange={() => handleTagChange(tag.id)}
-              />
-              {language === 'ua' ? tag.name_ua : tag.name_en}
-            </label>
-          ))}
+        {/* 🏷 Теги */}
+        <div className="form-field">
+          <span style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>
+            {language === 'ua' ? 'Фільтр за тегами:' : 'Filter by tags:'}
+          </span>
+          <div className="tag-filter-group">
+            {availableTags.map((tag) => (
+              <label key={tag.id}>
+                <input
+                  type="checkbox"
+                  value={tag.id}
+                  checked={selectedTags.includes(tag.id)}
+                  onChange={() => handleTagChange(tag.id)}
+                />
+                {language === 'ua' ? tag.name_ua : tag.name_en}
+              </label>
+            ))}
+          </div>
         </div>
   
         <button type="submit">{t.submit[language]}</button>
       </form>
   
-      {error && (
-        <p className="error-message">{error}</p>
-      )}
-  
-      {routes.length === 0 && (
-        <p className="no-results">{t.noResults[language]}</p>
-      )}
+      {error && <p className="error-message">{error}</p>}
+      {routes.length === 0 && <p className="no-results">{t.noResults[language]}</p>}
   
       <div className="route-list-grid">
         {routes.map(route => (
