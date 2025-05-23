@@ -12,10 +12,24 @@ function RouteCard({ route }) {
   const getHourLabel = (n) =>
     language === 'ua' ? `${n} ${getUkrainianHoursLabel(n)}` : `${n} ${getEnglishHoursLabel(n)}`;
 
+  const getDifficultyLabel = (level) => {
+    if (language === 'ua') {
+      if (level === 'easy') return 'Легкий';
+      if (level === 'medium') return 'Середній';
+      if (level === 'hard') return 'Складний';
+    } else {
+      return level.charAt(0).toUpperCase() + level.slice(1);
+    }
+  };
+
   return (
     <div className="route-card">
       {route.image_url && (
-        <img src={route.image_url} alt={name} className="route-card-image" />
+        <img
+          src={route.image_url}
+          alt={name}
+          className="route-card-image"
+        />
       )}
 
       <h3 className="route-card-title">
@@ -23,6 +37,12 @@ function RouteCard({ route }) {
           {name}
         </Link>
       </h3>
+
+      {route.difficulty && (
+        <div className={`route-card-difficulty difficulty-${route.difficulty}`}>
+          {getDifficultyLabel(route.difficulty)}
+        </div>
+      )}
 
       <p className="route-card-description">{description}</p>
 

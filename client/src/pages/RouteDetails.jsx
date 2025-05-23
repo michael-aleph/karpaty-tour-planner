@@ -86,19 +86,28 @@ function RouteDetails() {
             </ReactMarkdown>
           </div>
         </div>
-  
-        {route.tags?.length > 0 && (
-          <div className="route-tags">
-            <strong>{language === 'ua' ? 'Теги:' : 'Tags:'}</strong>
-            <div className="route-tag-list">
-              {route.tags.map(tag => (
-                <span className="route-tag" key={tag.id}>
-                  {language === 'ua' ? tag.name_ua : tag.name_en}
-                </span>
-              ))}
-            </div>
+        
+        <div className="route-tags">
+          <strong>{language === 'ua' ? 'Теги:' : 'Tags:'}</strong>
+          <div className="route-tag-list">
+            {route.difficulty && (
+              <span className={`route-tag difficulty-${route.difficulty}`}>
+                {language === 'ua'
+                  ? route.difficulty === 'easy' ? 'Легкий маршрут'
+                    : route.difficulty === 'medium' ? 'Середній маршрут'
+                    : 'Складний маршрут'
+                  : route.difficulty === 'easy' ? 'Easy'
+                    : route.difficulty === 'medium' ? 'Medium'
+                    : 'Hard'}
+              </span>
+            )}
+            {route.tags.map(tag => (
+              <span className="route-tag" key={tag.id}>
+                {language === 'ua' ? tag.name_ua : tag.name_en}
+              </span>
+            ))}
           </div>
-        )}
+        </div>
   
         {route.places?.length > 0 && (
           <div className="route-places">

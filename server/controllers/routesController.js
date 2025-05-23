@@ -11,6 +11,7 @@ exports.createRoute = async (req, res, next) => {
     image_url,
     content_ua,
     content_en,
+    difficulty,
     places,
     tags
   } = req.body;
@@ -22,9 +23,9 @@ exports.createRoute = async (req, res, next) => {
 
     const result = await client.query(
       `INSERT INTO routes
-      (name_ua, name_en, description_ua, description_en, duration_hours, image_url, content_ua, content_en)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       RETURNING *`,
+      (name_ua, name_en, description_ua, description_en, duration_hours, image_url, content_ua, content_en, difficulty)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING *`,
       [
         name_ua,
         name_en,
@@ -33,7 +34,8 @@ exports.createRoute = async (req, res, next) => {
         duration_hours,
         image_url,
         content_ua,
-        content_en
+        content_en,
+        difficulty
       ]
     );
 
@@ -95,11 +97,11 @@ exports.createRoute = async (req, res, next) => {
 // Get all routes
 exports.getAllRoutes = async (req, res, next) => {
   try {
-    const { tags, duration_min, duration_max, search } = req.query;
+    const { tags, duration_min, duration_max, search, difficulty } = req.query;
     if (duration_min && duration_max && parseInt(duration_min) > parseInt(duration_max)) {
       return res.status(400).json({ message: 'Мінімальна тривалість не може бути більшою за максимальну.' });
     }
-    
+
     const tagIds = tags ? tags.split(',').map(Number).filter(Boolean) : [];
 
     let userDuration = null;
@@ -114,8 +116,7 @@ exports.getAllRoutes = async (req, res, next) => {
     const params = [];
     const conditions = [];
     let baseQuery = `SELECT DISTINCT r.* FROM routes r`;
-    
-    // 🔹 Фільтр по тегах
+
     if (tagIds.length > 0) {
       baseQuery += ` JOIN route_tags rt ON rt.route_id = r.id`;
       conditions.push(`
@@ -129,18 +130,21 @@ exports.getAllRoutes = async (req, res, next) => {
       params.push(tagIds, tagIds.length);
     }
 
-    // 🔹 Фільтр по тривалості
     if (duration_min) {
       conditions.push(`r.duration_hours >= $${params.length + 1}`);
       params.push(parseInt(duration_min));
     }
-    
+
     if (duration_max) {
       conditions.push(`r.duration_hours <= $${params.length + 1}`);
       params.push(parseInt(duration_max));
     }
 
-    // 🔹 Пошук по назві
+    if (difficulty) {
+      conditions.push(`r.difficulty = $${params.length + 1}`);
+      params.push(difficulty);
+    }
+
     if (search) {
       conditions.push(`(LOWER(r.name_ua) LIKE LOWER($${params.length + 1}) OR LOWER(r.name_en) LIKE LOWER($${params.length + 1}))`);
       params.push(`%${search}%`);
@@ -153,40 +157,45 @@ exports.getAllRoutes = async (req, res, next) => {
     baseQuery += ` ORDER BY r.id`;
 
     const exactMatch = await pool.query(baseQuery, params);
-
-    // ✅ Є точні збіги — повертаємо
     if (exactMatch.rows.length > 0) {
       return res.json(exactMatch.rows);
     }
 
-    // 🧠 Немає — виконуємо розумний fallback
     const allRoutes = await pool.query(`
-      SELECT r.*, 
+      SELECT r.*,
         ARRAY(
           SELECT tag_id FROM route_tags WHERE route_id = r.id
         ) as tag_ids
       FROM routes r
     `);
 
+    const computeDifficultyScore = (user, actual) => {
+      if (!user || !actual) return 0;
+      if (user === actual) return 1;
+      const levels = ['easy', 'medium', 'hard'];
+      const diff = Math.abs(levels.indexOf(user) - levels.indexOf(actual));
+      return diff === 1 ? 0.5 : 0;
+    };
+
     const computeSimilarity = (route) => {
       let tagScore = 0;
       let durationScore = 0;
+      let difficultyScore = 0;
 
-      // --- Теги
       if (tagIds.length > 0 && route.tag_ids) {
         const matchedTags = route.tag_ids.filter(id => tagIds.includes(id));
         tagScore = matchedTags.length / tagIds.length;
       }
 
-      // --- Тривалість
       if (userDuration && route.duration_hours) {
         const diff = Math.abs(userDuration - route.duration_hours);
         durationScore = 1 - diff / userDuration;
         if (durationScore < 0) durationScore = 0;
       }
 
-      // --- Підсумковий коефіцієнт
-      return (0.6 * tagScore) + (0.4 * durationScore);
+      difficultyScore = computeDifficultyScore(difficulty, route.difficulty);
+
+      return (0.5 * tagScore) + (0.3 * durationScore) + (0.2 * difficultyScore);
     };
 
     const fallbackCandidates = allRoutes.rows
@@ -194,7 +203,7 @@ exports.getAllRoutes = async (req, res, next) => {
         ...route,
         similarity: computeSimilarity(route)
       }))
-      .filter(route => route.similarity >= 0.4) // 🔸 фільтр найгірших
+      .filter(route => route.similarity >= 0.4)
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, 5)
       .map(route => ({
@@ -202,13 +211,11 @@ exports.getAllRoutes = async (req, res, next) => {
         isFallback: true
       }));
 
-    return res.json(fallbackCandidates); // 🔁 Повертаємо fallback масив або []
+    return res.json(fallbackCandidates);
   } catch (error) {
     next(error);
   }
 };
-
-
 
 // Get route by ID з places та tags
 exports.getRouteById = async (req, res, next) => {
@@ -260,6 +267,7 @@ exports.updateRoute = async (req, res, next) => {
     image_url,
     content_ua,
     content_en,
+    difficulty,
     places,
     tags // додано
   } = req.body;
@@ -294,6 +302,7 @@ exports.updateRoute = async (req, res, next) => {
       image_url: req.body.image_url ?? existing.image_url,
       content_ua: req.body.content_ua ?? existing.content_ua,
       content_en: req.body.content_en ?? existing.content_en,
+      difficulty: req.body.difficulty ?? existing.difficulty,
     };
 
     const result = await client.query(
@@ -305,8 +314,9 @@ exports.updateRoute = async (req, res, next) => {
           duration_hours = $5,
           image_url = $6,
           content_ua = $7,
-          content_en = $8
-      WHERE id = $9
+          content_en = $8,
+          difficulty = $9
+      WHERE id = $10
       RETURNING *`,
       [
         updatedRoute.name_ua,
@@ -317,6 +327,7 @@ exports.updateRoute = async (req, res, next) => {
         updatedRoute.image_url,
         updatedRoute.content_ua,
         updatedRoute.content_en,
+        updatedRoute.difficulty,
         id
       ]
     );

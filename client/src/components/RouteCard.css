@@ -19,6 +19,7 @@
 
 .route-card-title {
   margin-top: 0;
+  margin-bottom: 0.7rem;
   font-size: 1.2rem;
 }
 
@@ -54,4 +55,46 @@
   background-color: var(--link);
   color: white;
   border-radius: 999px;
+}
+
+.route-card-difficulty {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 0rem;
+  margin-top: 0rem;
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.difficulty-easy {
+  background-color: #e0f7f1;
+  color: #007f5f;
+  
+}
+
+.difficulty-medium {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
+.difficulty-hard {
+  background-color: #fdecea;
+  color: #c62828;
+}
+
+[data-theme='dark'] .difficulty-easy {
+  background-color: #1e3a2f;
+  color: #6ee7b7;
+}
+
+[data-theme='dark'] .difficulty-medium {
+  background-color: #3b2f1e;
+  color: #facc15;
+}
+
+[data-theme='dark'] .difficulty-hard {
+  background-color: #3b1f22;
+  color: #f87171;
 }

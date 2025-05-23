@@ -210,6 +210,57 @@
   transform: translateX(-2px);
 }
 
+.route-tags {
+  margin-top: 1rem;
+}
+
+.route-tag-list {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.route-tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.85rem;
+  margin: 0;
+  border-radius: 999px;
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 💡 Колірні варіанти для складності (світла тема) */
+.route-tag.difficulty-easy {
+  background-color: #d4edda;
+  color: #256029;
+}
+.route-tag.difficulty-medium {
+  background-color: #ffe0b2;
+  color: #a65b00;
+}
+.route-tag.difficulty-hard {
+  background-color: #f8d7da;
+  color: #a6001a;
+}
+
+/* Темна тема */
+[data-theme='dark'] .route-tag.difficulty-easy {
+  background-color: #1f3e2a;
+  color: #b7f5c1;
+}
+[data-theme='dark'] .route-tag.difficulty-medium {
+  background-color: #5a3a1c;
+  color: #ffd39c;
+}
+[data-theme='dark'] .route-tag.difficulty-hard {
+  background-color: #4c1f1f;
+  color: #f9c5c8;
+}
+
+
 @media screen and (max-width: 768px) {
   .route-back {
     top: 5rem;

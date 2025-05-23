@@ -32,6 +32,10 @@ exports.validateRoute = [
   body('content_en')
     .optional()
     .isString().withMessage('Контент англійською має бути рядком'),
+  
+  body('difficulty')
+    .notEmpty().withMessage('Складність маршруту обовʼязкова')
+    .isIn(['easy', 'medium', 'hard']).withMessage('Складність повинна бути однією з: easy, medium, hard'),
 ];
 
 exports.validateRouteUpdate = [
@@ -65,5 +69,9 @@ exports.validateRouteUpdate = [
   
   body('content_en')
     .optional({ checkFalsy: true })
-    .isString().withMessage('Контент англійською має бути рядком'),  
+    .isString().withMessage('Контент англійською має бути рядком'),
+  
+  body('difficulty')
+    .optional({ checkFalsy: true })
+    .isIn(['easy', 'medium', 'hard']).withMessage('Складність повинна бути однією з: easy, medium, hard'),
 ];

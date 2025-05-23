@@ -9,12 +9,12 @@ function RouteList() {
   const { language } = useLanguage();
   const [routes, setRoutes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  // const [duration, setDuration] = useState('');
   const [availableTags, setAvailableTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [error, setError] = useState('');
   const [durationMin, setDurationMin] = useState('');
   const [durationMax, setDurationMax] = useState('');
+  const [difficulty, setDifficulty] = useState('');
 
   const t = {
     title: {
@@ -49,12 +49,13 @@ function RouteList() {
   };  
 
   // функція для завантаження маршрутів з бекенду
-  const fetchRoutes = async (search = '', minHours = '', maxHours = '') => {
+  const fetchRoutes = async (search = '', minHours = '', maxHours = '', difficulty = '') => {
     try {
       const params = {};
       if (search) params.search = search;
       if (minHours) params.duration_min = minHours;
       if (maxHours) params.duration_max = maxHours;
+      if (difficulty) params.difficulty = difficulty;
       if (selectedTags.length > 0) {
         params.tags = selectedTags.join(',');
       }
@@ -87,7 +88,7 @@ function RouteList() {
       return;
     }
   
-    fetchRoutes(searchTerm.trim(), durationMin, durationMax);
+    fetchRoutes(searchTerm.trim(), durationMin, durationMax, difficulty);
   };  
   
   const handleTagChange = (tagId) => {
@@ -157,7 +158,23 @@ function RouteList() {
             ))}
           </div>
         </div>
-  
+
+        <div className="form-field">
+          <label htmlFor="difficulty-select">
+            {language === 'ua' ? 'Складність' : 'Difficulty'}
+          </label>
+          <select
+            id="difficulty-select"
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+          >
+            <option value="">{language === 'ua' ? 'Усі' : 'All'}</option>
+            <option value="easy">{language === 'ua' ? 'Легкий' : 'Easy'}</option>
+            <option value="medium">{language === 'ua' ? 'Середній' : 'Medium'}</option>
+            <option value="hard">{language === 'ua' ? 'Складний' : 'Hard'}</option>
+          </select>
+        </div>
+
         <button type="submit">{t.submit[language]}</button>
       </form>
   
