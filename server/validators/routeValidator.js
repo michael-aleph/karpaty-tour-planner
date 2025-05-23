@@ -17,17 +17,9 @@ exports.validateRoute = [
     .optional()
     .isString().withMessage('Опис англійською має бути рядком'),
 
-  body('duration_days')
+  body('duration_hours')
     .notEmpty().withMessage('Тривалість маршруту обовʼязкова')
     .isInt({ min: 1 }).withMessage('Тривалість має бути додатним числом'),
-
-  body('budget_min')
-    .notEmpty().withMessage('Мінімальний бюджет обовʼязковий')
-    .isInt({ min: 0 }).withMessage('Мінімальний бюджет має бути числом'),
-
-  body('budget_max')
-    .notEmpty().withMessage('Максимальний бюджет обовʼязковий')
-    .isInt({ min: 0 }).withMessage('Максимальний бюджет має бути числом'),
   
   body('image_url')
     .optional()
@@ -59,17 +51,9 @@ exports.validateRouteUpdate = [
     .optional({ checkFalsy: true })
     .isString().withMessage('Опис англійською має бути рядком'),
 
-  body('duration_days')
+  body('duration_hours')
     .optional({ checkFalsy: true })
     .isInt({ min: 1 }).withMessage('Тривалість має бути додатним числом'),
-
-  body('budget_min')
-    .optional({ checkFalsy: true })
-    .isInt({ min: 0 }).withMessage('Мінімальний бюджет має бути числом'),
-
-  body('budget_max')
-    .optional({ checkFalsy: true })
-    .isInt({ min: 0 }).withMessage('Максимальний бюджет має бути числом'),
 
     body('image_url')
     .optional({ checkFalsy: true })

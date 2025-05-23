@@ -107,6 +107,16 @@
   color: var(--link-hover);
 }
 
+.fallback-message {
+  background-color: var(--card-bg);
+  color: var(--text);
+  border-left: 4px solid var(--btn-bg);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
 /* 📱 Мобільна адаптація */
 @media screen and (max-width: 768px) {
   .route-list-form {
@@ -126,3 +136,4 @@
     gap: 0.5rem 1rem;
   }
 }
+

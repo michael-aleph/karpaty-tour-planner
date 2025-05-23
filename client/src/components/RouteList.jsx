@@ -9,10 +9,12 @@ function RouteList() {
   const { language } = useLanguage();
   const [routes, setRoutes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [duration, setDuration] = useState('');
+  // const [duration, setDuration] = useState('');
   const [availableTags, setAvailableTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [error, setError] = useState('');
+  const [durationMin, setDurationMin] = useState('');
+  const [durationMax, setDurationMax] = useState('');
 
   const t = {
     title: {
@@ -47,28 +49,22 @@ function RouteList() {
   };  
 
   // функція для завантаження маршрутів з бекенду
-  const fetchRoutes = async (search = '', min = '', max = '', duration = '') => {
+  const fetchRoutes = async (search = '', minHours = '', maxHours = '') => {
     try {
       const params = {};
-  
       if (search) params.search = search;
-      if (min) params.budget_min = min;
-      if (max) params.budget_max = max;
-      if (duration) params.duration = duration;
+      if (minHours) params.duration_min = minHours;
+      if (maxHours) params.duration_max = maxHours;
       if (selectedTags.length > 0) {
         params.tags = selectedTags.join(',');
       }
-      
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/routes`,
-        { params }
-      );
+  
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/routes`, { params });
       setRoutes(response.data);
     } catch (error) {
       console.error('Помилка при отриманні маршрутів:', error);
     }
-  };
-
+  };   
 
   // завантаження при першому рендері
   useEffect(() => {
@@ -84,8 +80,15 @@ function RouteList() {
     e.preventDefault();
     setError('');
   
-    fetchRoutes(searchTerm.trim(), duration);
-  };
+    if (durationMin && durationMax && parseInt(durationMin) > parseInt(durationMax)) {
+      setError(language === 'ua'
+        ? 'Мінімальна тривалість не може бути більшою за максимальну.'
+        : 'Minimum duration cannot be greater than maximum.');
+      return;
+    }
+  
+    fetchRoutes(searchTerm.trim(), durationMin, durationMax);
+  };  
   
   const handleTagChange = (tagId) => {
     setSelectedTags((prev) =>
@@ -116,19 +119,25 @@ function RouteList() {
   
         {/* ⏱ Тривалість */}
         <div className="form-field">
-          <label htmlFor="duration-input">
-            {language === 'ua' ? 'Тривалість до (годин)' : 'Max duration (hours)'}
-          </label>
+          <label>{language === 'ua' ? 'Від (год)' : 'Min (hours)'}</label>
           <input
-            id="duration-input"
             type="number"
             min="1"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            placeholder={language === 'ua' ? 'Напр., 3' : 'e.g., 3'}
+            value={durationMin}
+            onChange={(e) => setDurationMin(e.target.value)}
           />
         </div>
-  
+
+        <div className="form-field">
+          <label>{language === 'ua' ? 'До (год)' : 'Max (hours)'}</label>
+          <input
+            type="number"
+            min="1"
+            value={durationMax}
+            onChange={(e) => setDurationMax(e.target.value)}
+          />
+        </div>
+
         {/* 🏷 Теги */}
         <div className="form-field">
           <span style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>
@@ -154,7 +163,14 @@ function RouteList() {
   
       {error && <p className="error-message">{error}</p>}
       {routes.length === 0 && <p className="no-results">{t.noResults[language]}</p>}
-  
+      
+      {routes.length > 0 && routes[0].isFallback && (
+        <div className="fallback-message">
+          {language === 'ua'
+            ? 'Точних збігів не знайдено. Тому ми підібрали найбільш схожі варіанти:'
+            : 'No exact match found. Here is the most relevant result:'}
+        </div>
+      )}
       <div className="route-list-grid">
         {routes.map(route => (
           <RouteCard key={route.id} route={route} />

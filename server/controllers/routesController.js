@@ -7,9 +7,7 @@ exports.createRoute = async (req, res, next) => {
     name_en,
     description_ua,
     description_en,
-    duration_days,
-    budget_min,
-    budget_max,
+    duration_hours,
     image_url,
     content_ua,
     content_en,
@@ -24,17 +22,15 @@ exports.createRoute = async (req, res, next) => {
 
     const result = await client.query(
       `INSERT INTO routes
-      (name_ua, name_en, description_ua, description_en, duration_days, budget_min, budget_max, image_url, content_ua, content_en)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      (name_ua, name_en, description_ua, description_en, duration_hours, image_url, content_ua, content_en)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
       [
         name_ua,
         name_en,
         description_ua,
         description_en,
-        duration_days,
-        budget_min,
-        budget_max,
+        duration_hours,
         image_url,
         content_ua,
         content_en
@@ -99,47 +95,49 @@ exports.createRoute = async (req, res, next) => {
 // Get all routes
 exports.getAllRoutes = async (req, res, next) => {
   try {
-    const { tags, duration, budget_min, budget_max, search } = req.query;
+    const { tags, duration_min, duration_max, search } = req.query;
+    if (duration_min && duration_max && parseInt(duration_min) > parseInt(duration_max)) {
+      return res.status(400).json({ message: 'Мінімальна тривалість не може бути більшою за максимальну.' });
+    }
+    
+    const tagIds = tags ? tags.split(',').map(Number).filter(Boolean) : [];
 
-    let baseQuery = `SELECT DISTINCT r.*
-                     FROM routes r`;
+    let userDuration = null;
+    if (duration_min && duration_max) {
+      userDuration = (parseInt(duration_min) + parseInt(duration_max)) / 2;
+    } else if (duration_min) {
+      userDuration = parseInt(duration_min);
+    } else if (duration_max) {
+      userDuration = parseInt(duration_max);
+    }
+
     const params = [];
     const conditions = [];
-
-    // 🔹 Фільтрація по тегах
-    if (tags) {
-      const tagIds = tags.split(',').map(id => parseInt(id)).filter(Boolean);
-
-      if (tagIds.length > 0) {
-        baseQuery += `
-          JOIN route_tags rt ON rt.route_id = r.id`;
-        conditions.push(`
-          r.id IN (
-            SELECT route_id
-            FROM route_tags
-            WHERE tag_id = ANY($${params.length + 1})
-            GROUP BY route_id
-            HAVING COUNT(DISTINCT tag_id) = $${params.length + 2}
-          )`);
-        params.push(tagIds, tagIds.length);
-      }
+    let baseQuery = `SELECT DISTINCT r.* FROM routes r`;
+    
+    // 🔹 Фільтр по тегах
+    if (tagIds.length > 0) {
+      baseQuery += ` JOIN route_tags rt ON rt.route_id = r.id`;
+      conditions.push(`
+        r.id IN (
+          SELECT route_id
+          FROM route_tags
+          WHERE tag_id = ANY($${params.length + 1})
+          GROUP BY route_id
+          HAVING COUNT(DISTINCT tag_id) = $${params.length + 2}
+        )`);
+      params.push(tagIds, tagIds.length);
     }
 
-    // 🔹 Фільтрація по тривалості
-    if (duration) {
-      conditions.push(`r.duration_days = $${params.length + 1}`);
-      params.push(parseInt(duration));
+    // 🔹 Фільтр по тривалості
+    if (duration_min) {
+      conditions.push(`r.duration_hours >= $${params.length + 1}`);
+      params.push(parseInt(duration_min));
     }
-
-    // 🔹 Фільтрація по бюджету
-    if (budget_min) {
-      conditions.push(`r.budget_max >= $${params.length + 1}`);
-      params.push(parseInt(budget_min));
-    }
-
-    if (budget_max) {
-      conditions.push(`r.budget_min <= $${params.length + 1}`);
-      params.push(parseInt(budget_max));
+    
+    if (duration_max) {
+      conditions.push(`r.duration_hours <= $${params.length + 1}`);
+      params.push(parseInt(duration_max));
     }
 
     // 🔹 Пошук по назві
@@ -148,24 +146,68 @@ exports.getAllRoutes = async (req, res, next) => {
       params.push(`%${search}%`);
     }
 
-    // 🔹 Додаємо WHERE, якщо є умови
     if (conditions.length > 0) {
       baseQuery += ` WHERE ` + conditions.join(' AND ');
     }
 
-    // 🔹 Сортування — наприклад, за id
     baseQuery += ` ORDER BY r.id`;
 
-    console.log('SQL:', baseQuery);
-    console.log('PARAMS:', params);
+    const exactMatch = await pool.query(baseQuery, params);
 
-    const result = await pool.query(baseQuery, params);
+    // ✅ Є точні збіги — повертаємо
+    if (exactMatch.rows.length > 0) {
+      return res.json(exactMatch.rows);
+    }
 
-    res.json(result.rows);
+    // 🧠 Немає — виконуємо розумний fallback
+    const allRoutes = await pool.query(`
+      SELECT r.*, 
+        ARRAY(
+          SELECT tag_id FROM route_tags WHERE route_id = r.id
+        ) as tag_ids
+      FROM routes r
+    `);
+
+    const computeSimilarity = (route) => {
+      let tagScore = 0;
+      let durationScore = 0;
+
+      // --- Теги
+      if (tagIds.length > 0 && route.tag_ids) {
+        const matchedTags = route.tag_ids.filter(id => tagIds.includes(id));
+        tagScore = matchedTags.length / tagIds.length;
+      }
+
+      // --- Тривалість
+      if (userDuration && route.duration_hours) {
+        const diff = Math.abs(userDuration - route.duration_hours);
+        durationScore = 1 - diff / userDuration;
+        if (durationScore < 0) durationScore = 0;
+      }
+
+      // --- Підсумковий коефіцієнт
+      return (0.6 * tagScore) + (0.4 * durationScore);
+    };
+
+    const fallbackCandidates = allRoutes.rows
+      .map(route => ({
+        ...route,
+        similarity: computeSimilarity(route)
+      }))
+      .filter(route => route.similarity >= 0.4) // 🔸 фільтр найгірших
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, 5)
+      .map(route => ({
+        ...route,
+        isFallback: true
+      }));
+
+    return res.json(fallbackCandidates); // 🔁 Повертаємо fallback масив або []
   } catch (error) {
     next(error);
   }
 };
+
 
 
 // Get route by ID з places та tags
@@ -214,9 +256,7 @@ exports.updateRoute = async (req, res, next) => {
     name_en,
     description_ua,
     description_en,
-    duration_days,
-    budget_min,
-    budget_max,
+    duration_hours,
     image_url,
     content_ua,
     content_en,
@@ -250,9 +290,7 @@ exports.updateRoute = async (req, res, next) => {
       name_en: req.body.name_en ?? existing.name_en,
       description_ua: req.body.description_ua ?? existing.description_ua,
       description_en: req.body.description_en ?? existing.description_en,
-      duration_days: req.body.duration_days ?? existing.duration_days,
-      budget_min: req.body.budget_min ?? existing.budget_min,
-      budget_max: req.body.budget_max ?? existing.budget_max,
+      duration_hours: req.body.duration_hours ?? existing.duration_hours,
       image_url: req.body.image_url ?? existing.image_url,
       content_ua: req.body.content_ua ?? existing.content_ua,
       content_en: req.body.content_en ?? existing.content_en,
@@ -264,22 +302,18 @@ exports.updateRoute = async (req, res, next) => {
           name_en = $2,
           description_ua = $3,
           description_en = $4,
-          duration_days = $5,
-          budget_min = $6,
-          budget_max = $7,
-          image_url = $8,
-          content_ua = $9,
-          content_en = $10
-      WHERE id = $11
+          duration_hours = $5,
+          image_url = $6,
+          content_ua = $7,
+          content_en = $8
+      WHERE id = $9
       RETURNING *`,
       [
         updatedRoute.name_ua,
         updatedRoute.name_en,
         updatedRoute.description_ua,
         updatedRoute.description_en,
-        updatedRoute.duration_days,
-        updatedRoute.budget_min,
-        updatedRoute.budget_max,
+        updatedRoute.duration_hours,
         updatedRoute.image_url,
         updatedRoute.content_ua,
         updatedRoute.content_en,
