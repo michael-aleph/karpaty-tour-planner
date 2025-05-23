@@ -26,6 +26,6 @@ app.use('/api/places', placesRouter);
 // Обробка помилок
 app.use(errorHandler);
 
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`Server started on http://127.0.0.1:${PORT}`);
+app.listen(PORT, 'localhost', () => {
+  console.log(`Server started on http://localhost:${PORT}`);
 });
