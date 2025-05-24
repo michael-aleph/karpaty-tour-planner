@@ -64,18 +64,116 @@
   background-color: var(--btn-hover);
 }
 
-/* Теги */
-.tag-filter-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem 1.5rem;
-  margin-top: 0.3rem;
+/* 🔘 Обгортка блоку тегів */
+.tag-filter-wrapper {
+  flex: 1 1 100%;
+  margin-top: 0.5rem;
 }
 
-.tag-filter-group label {
-  font-size: 0.85rem;
+/* 🏷 Назва фільтра */
+.tag-filter-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
   color: var(--text);
 }
+
+/* 🎛 Група чекбоксів тегів */
+.tag-filter-group {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  gap: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--btn-bg) transparent;
+}
+
+.tag-filter-group::-webkit-scrollbar {
+  height: 6px;
+}
+.tag-filter-group::-webkit-scrollbar-track {
+  background: transparent;
+}
+.tag-filter-group::-webkit-scrollbar-thumb {
+  background-color: var(--btn-bg);
+  border-radius: 10px;
+}
+
+/* ✅ Індивідуальний кастомний чекбокс */
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.04);
+  transition: background-color 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.custom-checkbox:hover {
+  background-color: rgba(255, 255, 255, 0.07);
+  border-color: rgba(var(--btn-bg-rgb), 0.4); /* 👈 мʼякша обводка */
+  box-shadow: 0 0 0 2px rgba(var(--btn-bg-rgb), 0.15); /* 👈 легке сяйво */
+}
+
+
+/* ❌ Приховує стандартний чекбокс */
+.custom-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* 🔲 Створюємо прямокутний кастомний чекбокс */
+.custom-checkbox .checkmark {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--btn-bg);
+  border-radius: 4px;
+  background-color: transparent;
+  position: relative; /* обов'язково! */
+}
+
+
+/* ✅ Галочка */
+.custom-checkbox .checkmark::after {
+  content: "";
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 9px;
+  border: solid var(--btn-text);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -60%) rotate(45deg);
+}
+
+
+
+/* 🟩 Показуємо галочку, коли вибрано */
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
+  background-color: var(--btn-bg);
+  border-color: var(--btn-bg);
+}
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark::after {
+  display: block;
+}
+
+/* 🏷 Назва тега поруч із чекбоксом */
+.checkbox-label {
+  line-height: 1;
+}
+
 
 /* Повідомлення про помилку / відсутність результатів */
 .error-message {
@@ -94,6 +192,33 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1rem;
+  align-items: stretch;
+}
+
+.route-card-grid-item {
+  width: 100%;
+  height: 100%; /* 👈 Робить кожен motion.div повної висоти грід-рядка */
+  display: flex;
+}
+
+/* Анімація карток */
+.fade-card-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.fade-card-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+.fade-card-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-card-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms ease, transform 300ms ease;
 }
 
 /* Посилання в картках */
@@ -106,6 +231,8 @@
   text-decoration: underline;
   color: var(--link-hover);
 }
+
+
 
 .fallback-message {
   background-color: var(--card-bg);
@@ -136,4 +263,6 @@
     gap: 0.5rem 1rem;
   }
 }
+
+
 

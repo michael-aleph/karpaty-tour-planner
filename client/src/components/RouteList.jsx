@@ -3,7 +3,9 @@ import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import RouteCard from '../components/RouteCard';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import './RouteList.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function RouteList() {
   const { language } = useLanguage();
@@ -140,24 +142,28 @@ function RouteList() {
         </div>
 
         {/* 🏷 Теги */}
-        <div className="form-field">
-          <span style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>
+        <div className="form-field tag-filter-wrapper">
+          <div className="tag-filter-label">
             {language === 'ua' ? 'Фільтр за тегами:' : 'Filter by tags:'}
-          </span>
+          </div>
           <div className="tag-filter-group">
             {availableTags.map((tag) => (
-              <label key={tag.id}>
+              <label key={tag.id} className="custom-checkbox">
                 <input
                   type="checkbox"
                   value={tag.id}
                   checked={selectedTags.includes(tag.id)}
                   onChange={() => handleTagChange(tag.id)}
                 />
-                {language === 'ua' ? tag.name_ua : tag.name_en}
+                <span className="checkmark" />
+                <span className="checkbox-label">
+                  {language === 'ua' ? tag.name_ua : tag.name_en}
+                </span>
               </label>
             ))}
           </div>
         </div>
+
 
         <div className="form-field">
           <label htmlFor="difficulty-select">
@@ -189,10 +195,23 @@ function RouteList() {
         </div>
       )}
       <div className="route-list-grid">
-        {routes.map(route => (
-          <RouteCard key={route.id} route={route} />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {routes.map((route) => (
+            <motion.div
+              key={route.id}
+              layout
+              className="route-card-grid-item"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+            >
+              <RouteCard route={route} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
+
     </div>
   );  
 }
