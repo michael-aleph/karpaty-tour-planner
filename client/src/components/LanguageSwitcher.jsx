@@ -1,4 +1,4 @@
-import { useLanguage } from '../contexts/LanguageContext';
+import useLanguage from '../hooks/useLanguage';
 
 function LanguageSwitcher() {
   const { language, toggleLanguage } = useLanguage();

@@ -1,10 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-
-const LanguageContext = createContext();
+import { useEffect, useState } from 'react';
+import { LanguageContext } from './LanguageContext';
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState(null); // ← на старті null
-  const [isLoaded, setIsLoaded] = useState(false); // ← чи вже підвантажено
+  const [language, setLanguage] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const storedLang = localStorage.getItem('language') || 'ua';
@@ -24,5 +23,3 @@ export const LanguageProvider = ({ children }) => {
     </LanguageContext.Provider>
   );
 };
-
-export const useLanguage = () => useContext(LanguageContext);

@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import ModalImage from 'react-modal-image';
 import axios from 'axios';
-import { useLanguage } from '../contexts/LanguageContext';
+import useLanguage from '../hooks/useLanguage';
 import './RouteDetails.css';
 
 const renderers = {

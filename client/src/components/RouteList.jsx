@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { useLanguage } from '../contexts/LanguageContext';
+import useLanguage from '../hooks/useLanguage';
 import { Link } from 'react-router-dom';
 import RouteCard from '../components/RouteCard';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
