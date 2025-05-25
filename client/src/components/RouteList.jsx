@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import RouteCard from '../components/RouteCard';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import './RouteList.css';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 
 function RouteList() {
   const { language } = useLanguage();
@@ -51,7 +51,7 @@ function RouteList() {
   };  
 
   // функція для завантаження маршрутів з бекенду
-  const fetchRoutes = async (search = '', minHours = '', maxHours = '', difficulty = '') => {
+  const fetchRoutes = useCallback(async (search = '', minHours = '', maxHours = '', difficulty = '') => {
     try {
       const params = {};
       if (search) params.search = search;
@@ -67,11 +67,20 @@ function RouteList() {
     } catch (error) {
       console.error('Помилка при отриманні маршрутів:', error);
     }
-  };   
+  }, [selectedTags]);
+  
+  const fetchInitialRoutes = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/routes`);
+      setRoutes(response.data);
+    } catch (error) {
+      console.error('Помилка при отриманні маршрутів:', error);
+    }
+  };  
 
   // завантаження при першому рендері
   useEffect(() => {
-    fetchRoutes();
+    fetchInitialRoutes();
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/tags`)
       .then((res) => setAvailableTags(res.data))
@@ -155,11 +164,25 @@ function RouteList() {
                   checked={selectedTags.includes(tag.id)}
                   onChange={() => handleTagChange(tag.id)}
                 />
-                <span className="checkmark" />
+                <span className="checkmark-container">
+                  <svg
+                    className="checkmark"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <circle className="checkmark__fill" cx="12" cy="12" r="13" />
+                    <path
+                      className="checkmark__check"
+                      d="M5 13l4 4L19 7"
+                      fill="none"
+                    />
+                  </svg>
+                </span>
                 <span className="checkbox-label">
                   {language === 'ua' ? tag.name_ua : tag.name_en}
                 </span>
-              </label>
+              </label>            
             ))}
           </div>
         </div>
@@ -197,7 +220,7 @@ function RouteList() {
       <div className="route-list-grid">
         <AnimatePresence mode="popLayout">
           {routes.map((route) => (
-            <motion.div
+            <Motion.div
               key={route.id}
               layout
               className="route-card-grid-item"
@@ -207,7 +230,7 @@ function RouteList() {
               transition={{ duration: 0.25 }}
             >
               <RouteCard route={route} />
-            </motion.div>
+            </Motion.div>
           ))}
         </AnimatePresence>
       </div>

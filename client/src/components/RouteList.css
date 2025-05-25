@@ -3,7 +3,7 @@
 }
 
 .route-list h2 {
-  margin-top: 0rem; /* або менше */
+  margin-top: 0rem;
 }
 
 .route-list-form {
@@ -14,7 +14,6 @@
   margin-bottom: 1.5rem;
 }
 
-/* Кожне поле (label + input) */
 .form-field {
   display: flex;
   flex-direction: column;
@@ -27,27 +26,23 @@
   }
 }
 
-/* Підпис до поля */
 .form-field label {
   font-size: 0.9rem;
   margin-bottom: 0.3rem;
   color: var(--text);
 }
 
-/* input/select поля */
 .route-list-form input,
 .route-list-form select {
   padding: 0.4rem 0.6rem;
-  border: 1px solid #ccc;
+  border: 1px solid #aaa;
   border-radius: 6px;
   outline: none;
   background-color: var(--card-bg);
   color: var(--text);
-  border: 1px solid #aaa;
   font-size: 0.95rem;
 }
 
-/* кнопка Пошуку */
 .route-list-form button {
   background-color: var(--btn-bg);
   color: var(--btn-text);
@@ -64,13 +59,12 @@
   background-color: var(--btn-hover);
 }
 
-/* 🔘 Обгортка блоку тегів */
+/* Теги */
 .tag-filter-wrapper {
   flex: 1 1 100%;
   margin-top: 0.5rem;
 }
 
-/* 🏷 Назва фільтра */
 .tag-filter-label {
   font-size: 0.9rem;
   font-weight: 600;
@@ -78,7 +72,6 @@
   color: var(--text);
 }
 
-/* 🎛 Група чекбоксів тегів */
 .tag-filter-group {
   display: flex;
   flex-wrap: nowrap;
@@ -100,7 +93,7 @@
   border-radius: 10px;
 }
 
-/* ✅ Індивідуальний кастомний чекбокс */
+/* Кастомний чекбокс */
 .custom-checkbox {
   display: flex;
   align-items: center;
@@ -109,73 +102,72 @@
   font-weight: 500;
   color: var(--text);
   cursor: pointer;
-  position: relative;
   user-select: none;
   white-space: nowrap;
   padding: 0.3rem 0.6rem;
   border-radius: 6px;
   background-color: rgba(255, 255, 255, 0.04);
   transition: background-color 0.2s ease;
-  border: 1px solid transparent;
 }
 
 .custom-checkbox:hover {
   background-color: rgba(255, 255, 255, 0.07);
-  border-color: rgba(var(--btn-bg-rgb), 0.4); /* 👈 мʼякша обводка */
-  box-shadow: 0 0 0 2px rgba(var(--btn-bg-rgb), 0.15); /* 👈 легке сяйво */
 }
 
-
-/* ❌ Приховує стандартний чекбокс */
+/* Приховує стандартний checkbox */
 .custom-checkbox input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   cursor: pointer;
 }
 
-/* 🔲 Створюємо прямокутний кастомний чекбокс */
-.custom-checkbox .checkmark {
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--btn-bg);
-  border-radius: 4px;
-  background-color: transparent;
-  position: relative; /* обов'язково! */
+/* Обгортка для SVG галочки */
+.checkmark-container {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  position: relative;
+  margin-right: 6px;
+  border-radius: 50%;
+}
+.checkmark {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--btn-bg);       /* обводка */
+  background-color: transparent;         /* початково без фону */
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
-
-/* ✅ Галочка */
-.custom-checkbox .checkmark::after {
-  content: "";
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 9px;
-  border: solid var(--btn-text);
-  border-width: 0 2px 2px 0;
-  transform: translate(-50%, -60%) rotate(45deg);
+.checkmark__check {
+  stroke: var(--btn-text);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  transition: stroke-dashoffset 0.3s ease-in-out;
 }
 
+.checkmark__fill {
+  fill: transparent; /* Немає заливки спочатку */
+  transition: fill 0.3s ease;
+}
 
-
-/* 🟩 Показуємо галочку, коли вибрано */
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
-  background-color: var(--btn-bg);
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark-container .checkmark__check {
+  stroke-dashoffset: 0;
+  background-color: var(--btn-bg);       /* 🔹 Заливка темним */
   border-color: var(--btn-bg);
 }
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark::after {
-  display: block;
+
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark-container .checkmark__fill {
+  fill: var(--btn-bg);
 }
 
-/* 🏷 Назва тега поруч із чекбоксом */
 .checkbox-label {
   line-height: 1;
 }
 
-
-/* Повідомлення про помилку / відсутність результатів */
 .error-message {
   color: red;
   margin-bottom: 1rem;
@@ -187,7 +179,6 @@
   color: var(--text);
 }
 
-/* Грід карток */
 .route-list-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -197,11 +188,10 @@
 
 .route-card-grid-item {
   width: 100%;
-  height: 100%; /* 👈 Робить кожен motion.div повної висоти грід-рядка */
+  height: 100%;
   display: flex;
 }
 
-/* Анімація карток */
 .fade-card-enter {
   opacity: 0;
   transform: translateY(10px);
@@ -221,7 +211,6 @@
   transition: opacity 300ms ease, transform 300ms ease;
 }
 
-/* Посилання в картках */
 .route-card-link {
   color: var(--link);
   text-decoration: none;
@@ -232,8 +221,6 @@
   color: var(--link-hover);
 }
 
-
-
 .fallback-message {
   background-color: var(--card-bg);
   color: var(--text);
@@ -241,10 +228,9 @@
   padding: 1rem;
   margin-bottom: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* 📱 Мобільна адаптація */
 @media screen and (max-width: 768px) {
   .route-list-form {
     flex-direction: column;
@@ -263,6 +249,3 @@
     gap: 0.5rem 1rem;
   }
 }
-
-
-

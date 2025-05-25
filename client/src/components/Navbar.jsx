@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useTheme } from '../contexts/ThemeContext';
+import useTheme from '../contexts/useTheme';
 import { Moon, Sun } from 'lucide-react';
 import './Navbar.css';
 
