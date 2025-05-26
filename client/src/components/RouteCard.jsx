@@ -25,11 +25,13 @@ function RouteCard({ route }) {
   return (
     <div className="route-card">
       {route.image_url && (
-        <img
-          src={route.image_url}
-          alt={name}
-          className="route-card-image"
-        />
+        <Link to={`/routes/${route.id}`}>
+          <img
+            src={route.image_url}
+            alt={name}
+            className="route-card-image"
+          />
+        </Link>
       )}
 
       <h3 className="route-card-title">

@@ -12,18 +12,50 @@
   backdrop-filter: blur(4px);
 }
 
-
-.navbar-logo {
-  font-weight: bold;
-  color: var(--text);
-  text-decoration: none;
-  font-size: 1.1rem;
-}
-
-.navbar-controls {
+/* Ліва частина навбару з вкладками */
+.navbar-left {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
+}
+
+/* Посилання в навбарі */
+.navbar-logo,
+.navbar-link {
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.2s ease;
+}
+
+.navbar-logo-icon {
+  height: 20px;
+  width: auto;
+  object-fit: contain;
+  display: inline-block;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+
+
+/* Активна вкладка */
+.navbar-logo.active,
+.navbar-link.active {
+  border-bottom: 3px solid var(--btn-bg);
+  border-radius: 0px;
+  padding-bottom: 0.3rem;
+}
+
+/* Ховер по неактивній вкладці  */
+.navbar-logo:hover,
+.navbar-link:hover {
+  color: var(--link-hover);
+  text-decoration: none;
 }
 
 /* Перемикач мов */
@@ -36,7 +68,7 @@
 .lang-option {
   background: transparent;
   border: none;
-  color: var(--link);
+  color: var(--text);
   cursor: pointer;
   padding: 0.25rem 0.5rem;
   font-weight: 500;
@@ -103,3 +135,44 @@
   transform: scale(0.8);
   pointer-events: none;
 }
+
+.navbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .navbar-left {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+  }
+
+  .navbar-logo,
+  .navbar-link {
+    font-size: 0.95rem;
+    padding: 0.35rem 0.6rem;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .navbar-logo-icon {
+    height: 18px;
+    margin-right: 0.4rem;
+  }
+
+  .navbar-controls {
+    justify-content: center;
+  }
+}
+

@@ -177,9 +177,20 @@
 
 .route-list-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-  align-items: stretch;
+  gap: 2rem;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 600px) {
+  .route-list-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .route-list-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .route-card-grid-item {
@@ -226,6 +237,29 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.reset-btn {
+  background-color: transparent;
+  color: var(--text);
+  border: 1px solid #ccc;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.reset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #eee;
+  color: #888;
+  border: 1px solid #ccc;
+}
+
 
 @media screen and (max-width: 768px) {
   .route-list-form {

@@ -1,0 +1,224 @@
+/* Hero Section */
+.home-hero {
+  background-image: url('https://iili.io/3btrolf.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 6rem 1rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-content {
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 800px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] .hero-content {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.hero-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .home-hero {
+    padding: 4rem 1rem;
+  }
+
+  .hero-content {
+    padding: 1.5rem;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+}
+
+.home-cta-btn {
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.home-cta-btn:hover {
+  background-color: var(--btn-hover);
+  color: var(--btn-text);
+  text-decoration: none;
+}
+
+/* Three-Column Info Row */
+.home-description-wrapper {
+  padding-inline: 1.5rem;
+}
+
+.home-description-row {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr;
+  gap: 2rem;
+  max-width: 1800px;
+  margin: 4rem auto;
+  width: 100%;
+  align-items: stretch;
+}
+
+.description-side-card,
+.description-main-card {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  padding-bottom: 0rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.description-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.description-content p {
+  margin-bottom: 1rem;
+}
+
+.description-side-card:hover,
+.description-main-card:hover {
+  transform: translateY(-4px);
+}
+
+.description-icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .home-description-row {
+    grid-template-columns: 1fr;
+    gap: 4.5rem; /* ✅ між карточками */
+  }
+
+  .description-side-card,
+  .description-main-card {
+    padding: 1.5rem;
+  }
+
+  .description-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .description-main-card p.description-lead {
+    text-align: left;
+  }
+}
+
+
+
+.description-main-card h2,
+.description-side-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.description-main-card p.description-lead {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.description-main-card p,
+.description-side-card p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+/* Travel Tips List */
+.travel-tips {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.travel-tips li {
+  background-color: var(--bg);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tip-icon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+/* Facts Section */
+.home-facts {
+  background-color: var(--card-bg);
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.home-facts h2 {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+}
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .fact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fact-card {
+  background-color: var(--bg);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.fact-card:hover {
+  transform: translateY(-4px);
+}

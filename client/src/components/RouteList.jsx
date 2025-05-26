@@ -17,6 +17,7 @@ function RouteList() {
   const [durationMin, setDurationMin] = useState('');
   const [durationMax, setDurationMax] = useState('');
   const [difficulty, setDifficulty] = useState('');
+  const [sortOption, setSortOption] = useState('');
 
   const t = {
     title: {
@@ -63,11 +64,27 @@ function RouteList() {
       }
   
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/routes`, { params });
-      setRoutes(response.data);
+      let sorted = response.data;
+
+      if (sortOption === 'name') {
+        sorted = [...sorted].sort((a, b) =>
+          language === 'ua'
+            ? a.name_ua.localeCompare(b.name_ua, 'uk')
+            : a.name_en.localeCompare(b.name_en, 'en')
+        );
+      } else if (sortOption === 'duration') {
+        sorted = [...sorted].sort((a, b) => a.duration_hours - b.duration_hours);
+      } else if (sortOption === 'difficulty') {
+        const order = { easy: 1, medium: 2, hard: 3 };
+        sorted = [...sorted].sort((a, b) => order[a.difficulty] - order[b.difficulty]);
+      }
+
+      setRoutes(sorted);
+
     } catch (error) {
       console.error('Помилка при отриманні маршрутів:', error);
     }
-  }, [selectedTags]);
+  }, [selectedTags, sortOption, language]);
   
   const fetchInitialRoutes = async () => {
     try {
@@ -100,6 +117,16 @@ function RouteList() {
     }
   
     fetchRoutes(searchTerm.trim(), durationMin, durationMax, difficulty);
+  };
+
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setDurationMin('');
+    setDurationMax('');
+    setDifficulty('');
+    setSelectedTags([]);
+    setError('');
+    fetchInitialRoutes();
   };  
   
   const handleTagChange = (tagId) => {
@@ -109,6 +136,13 @@ function RouteList() {
         : [...prev, tagId]
     );
   };
+
+  const areFiltersActive =
+  searchTerm.trim() !== '' ||
+  durationMin !== '' ||
+  durationMax !== '' ||
+  difficulty !== '' ||
+  selectedTags.length > 0;
 
   return (
     <div className="route-list">
@@ -204,7 +238,33 @@ function RouteList() {
           </select>
         </div>
 
-        <button type="submit">{t.submit[language]}</button>
+        <div className="form-field">
+          <label htmlFor="sort-select">
+            {language === 'ua' ? 'Сортувати за:' : 'Sort by:'}
+          </label>
+          <select
+            id="sort-select"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="">{language === 'ua' ? 'Без сортування' : 'No sorting'}</option>
+            <option value="name">{language === 'ua' ? 'Назвою (А → Я)' : 'Name (A → Z)'}</option>
+            <option value="duration">{language === 'ua' ? 'Тривалістю' : 'Duration'}</option>
+            <option value="difficulty">{language === 'ua' ? 'Складністю' : 'Difficulty'}</option>
+          </select>
+        </div>
+
+        <div className="form-buttons">
+          <button type="submit">{t.submit[language]}</button>
+          <button
+            type="button"
+            onClick={handleResetFilters}
+            className="reset-btn"
+            disabled={!areFiltersActive}
+          >
+            {language === 'ua' ? 'Скинути фільтри' : 'Reset filters'}
+          </button>
+        </div>
       </form>
   
       {error && <p className="error-message">{error}</p>}

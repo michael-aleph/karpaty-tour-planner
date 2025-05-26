@@ -32,9 +32,9 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Центруємо контент по ширині */
-.container {
-  max-width: 1000px;
+/* Центруємо контент по ширині для маршрутів */
+.routes-container {
+  max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
 }

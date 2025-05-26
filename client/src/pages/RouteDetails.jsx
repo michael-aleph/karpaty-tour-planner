@@ -50,7 +50,7 @@ function RouteDetails() {
 
   if (notFound) {
     return (
-      <div className="container">
+      <div className="routes-container">
         <h2>404 — {language === 'ua' ? 'Маршрут не знайдено' : 'Route not found'}</h2>
         <Link to="/">{language === 'ua' ? 'Повернутись на головну' : 'Back to home'}</Link>
       </div>
@@ -58,7 +58,7 @@ function RouteDetails() {
   }
 
   if (!route) {
-    return <div className="container">{language === 'ua' ? 'Завантаження...' : 'Loading...'}</div>;
+    return <div className="routes-container">{language === 'ua' ? 'Завантаження...' : 'Loading...'}</div>;
   }
 
   return (
@@ -75,7 +75,7 @@ function RouteDetails() {
           />
         )}
       </div>
-      <div className="container">
+      <div className="routes-container">
         <div className="route-content-wrapper">
           <div className="route-content">
             <ReactMarkdown

@@ -1,0 +1,92 @@
+.site-footer {
+  background-color: var(--card-bg);
+  color: var(--text);
+  padding: 2.5rem 1rem 1rem;
+  border-top: 1px solid #ddd;
+  margin-top: 4rem;
+  font-size: 0.95rem;
+}
+
+.footer-content {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  justify-content: center;
+  gap: 20rem;
+  max-width: 1600px;
+  padding: 0 1rem;
+}
+
+.footer-logo {
+  font-weight: bold;
+  font-size: 1.3rem;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.footer-slogan,
+.footer-author {
+  margin: 0.3rem 0;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.footer-left h4,
+.footer-links h4,
+.footer-contacts h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.6rem;
+  color: var(--text);
+}
+
+.footer-author strong {
+  font-weight: 600;
+}
+
+.footer-links a,
+.footer-contacts a {
+  color: var(--link);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover,
+.footer-contacts a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem; /* ✅ Відступ між посиланнями */
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    padding-inline: 1rem;
+  }
+
+  .footer-content > div {
+    width: 100%;
+  }
+
+  .footer-bottom {
+    text-align: left;
+    padding-inline: 1rem;
+  }
+}

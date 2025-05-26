@@ -1,18 +1,34 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // додано useLocation
 import useLanguage from '../hooks/useLanguage';
 import useTheme from '../hooks/useTheme';
 import { Moon, Sun } from 'lucide-react';
 import './Navbar.css';
+import logo from '../assets/logo.png';
 
 function Navbar() {
   const { language, toggleLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation(); // визначає активну вкладку
 
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-logo">
-        🏕 {language === 'ua' ? 'Головна' : 'Home'}
-      </Link>
+      <div className="navbar-left">
+        <Link
+          to="/"
+          className={`navbar-logo ${location.pathname === '/' ? 'active' : ''}`}
+        >
+          <span className="navbar-logo-content">
+            <img src={logo} alt="Karpaty Logo" className="navbar-logo-icon" />
+            <span>{language === 'ua' ? 'Головна' : 'Home'}</span>
+          </span>
+        </Link>
+        <Link
+          to="/routes"
+          className={`navbar-link ${location.pathname.startsWith('/routes') ? 'active' : ''}`}
+        >
+          {language === 'ua' ? 'Маршрути' : 'Routes'}
+        </Link>
+      </div>
 
       <div className="navbar-controls">
         <div className="lang-switch">
