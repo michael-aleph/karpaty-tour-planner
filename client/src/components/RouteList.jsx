@@ -21,6 +21,7 @@ function RouteList() {
   const durationMinRef = useRef('');
   const durationMaxRef = useRef('');
   const difficultyRef = useRef('');
+  const selectedTagsRef = useRef([]);
 
   const t = {
     title: {
@@ -63,9 +64,9 @@ function RouteList() {
       if (maxHours) params.duration_max = maxHours;
       if (difficulty) params.difficulty = difficulty;
       if (sortOption) params.sort = sortOption;
-      if (selectedTags.length > 0) {
-        params.tags = selectedTags.join(',');
-      }
+      if (selectedTagsRef.current.length > 0) {
+        params.tags = selectedTagsRef.current.join(',');
+      }      
   
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/routes`, { params });
       let sorted = response.data;
@@ -82,7 +83,7 @@ function RouteList() {
         const order = { easy: 1, medium: 2, hard: 3 };
         sorted = [...sorted].sort((a, b) => order[a.difficulty] - order[b.difficulty]);
       }
-
+      
       setRoutes(sorted);
 
     } catch (error) {
@@ -142,6 +143,7 @@ function RouteList() {
     durationMinRef.current = durationMin;
     durationMaxRef.current = durationMax;
     difficultyRef.current = difficulty;
+    selectedTagsRef.current = selectedTags;
   
     fetchRoutes(searchTerm.trim(), durationMin, durationMax, difficulty);
   };
@@ -153,22 +155,27 @@ function RouteList() {
     setDifficulty('');
     setSelectedTags([]);
     setError('');
-    fetchInitialRoutes();
 
     searchRef.current = '';
     durationMinRef.current = '';
     durationMaxRef.current = '';
     difficultyRef.current = '';
+    selectedTagsRef.current = [];
 
-    fetchRoutes('', '', '', '');
+    setTimeout(() => {
+      fetchRoutes('', '', '', '');
+    }, 0);
   };  
   
   const handleTagChange = (tagId) => {
-    setSelectedTags((prev) =>
-      prev.includes(tagId)
+    setSelectedTags((prev) => {
+      const updated = prev.includes(tagId)
         ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId]
-    );
+        : [...prev, tagId];
+  
+      selectedTagsRef.current = updated;
+      return updated;
+    });
   };
 
   return (

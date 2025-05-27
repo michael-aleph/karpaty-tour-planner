@@ -74,23 +74,9 @@
 
 .tag-filter-group {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  gap: 0.5rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--btn-bg) transparent;
-}
-
-.tag-filter-group::-webkit-scrollbar {
-  height: 6px;
-}
-.tag-filter-group::-webkit-scrollbar-track {
-  background: transparent;
-}
-.tag-filter-group::-webkit-scrollbar-thumb {
-  background-color: var(--btn-bg);
-  border-radius: 10px;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding-top: 0.3rem;
 }
 
 /* Кастомний чекбокс */
