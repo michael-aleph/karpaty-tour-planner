@@ -1,9 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import useLanguage from '../hooks/useLanguage';
-import { Link } from 'react-router-dom';
 import RouteCard from '../components/RouteCard';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import './RouteList.css';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 
@@ -18,6 +16,11 @@ function RouteList() {
   const [durationMax, setDurationMax] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [sortOption, setSortOption] = useState('');
+
+  const searchRef = useRef('');
+  const durationMinRef = useRef('');
+  const durationMaxRef = useRef('');
+  const difficultyRef = useRef('');
 
   const t = {
     title: {
@@ -50,7 +53,7 @@ function RouteList() {
     },
     
   };  
-
+  
   // функція для завантаження маршрутів з бекенду
   const fetchRoutes = useCallback(async (search = '', minHours = '', maxHours = '', difficulty = '') => {
     try {
@@ -59,6 +62,7 @@ function RouteList() {
       if (minHours) params.duration_min = minHours;
       if (maxHours) params.duration_max = maxHours;
       if (difficulty) params.difficulty = difficulty;
+      if (sortOption) params.sort = sortOption;
       if (selectedTags.length > 0) {
         params.tags = selectedTags.join(',');
       }
@@ -93,7 +97,7 @@ function RouteList() {
     } catch (error) {
       console.error('Помилка при отриманні маршрутів:', error);
     }
-  };  
+  };
 
   // завантаження при першому рендері
   useEffect(() => {
@@ -104,6 +108,24 @@ function RouteList() {
       .catch((err) => console.error('Помилка при отриманні тегів:', err));
   }, []);
 
+  const areFiltersActive =
+  searchTerm.trim() !== '' ||
+  durationMin !== '' ||
+  durationMax !== '' ||
+  difficulty !== '' ||
+  selectedTags.length > 0;
+
+  useEffect(() => {
+    if (sortOption) {
+      fetchRoutes(
+        searchRef.current,
+        durationMinRef.current,
+        durationMaxRef.current,
+        difficultyRef.current
+      );
+    }
+  }, [sortOption, fetchRoutes]);
+  
   // обробка сабміту форми
   const handleSearch = (e) => {
     e.preventDefault();
@@ -115,6 +137,11 @@ function RouteList() {
         : 'Minimum duration cannot be greater than maximum.');
       return;
     }
+
+    searchRef.current = searchTerm.trim();
+    durationMinRef.current = durationMin;
+    durationMaxRef.current = durationMax;
+    difficultyRef.current = difficulty;
   
     fetchRoutes(searchTerm.trim(), durationMin, durationMax, difficulty);
   };
@@ -127,6 +154,13 @@ function RouteList() {
     setSelectedTags([]);
     setError('');
     fetchInitialRoutes();
+
+    searchRef.current = '';
+    durationMinRef.current = '';
+    durationMaxRef.current = '';
+    difficultyRef.current = '';
+
+    fetchRoutes('', '', '', '');
   };  
   
   const handleTagChange = (tagId) => {
@@ -136,13 +170,6 @@ function RouteList() {
         : [...prev, tagId]
     );
   };
-
-  const areFiltersActive =
-  searchTerm.trim() !== '' ||
-  durationMin !== '' ||
-  durationMax !== '' ||
-  difficulty !== '' ||
-  selectedTags.length > 0;
 
   return (
     <div className="route-list">
@@ -238,22 +265,6 @@ function RouteList() {
           </select>
         </div>
 
-        <div className="form-field">
-          <label htmlFor="sort-select">
-            {language === 'ua' ? 'Сортувати за:' : 'Sort by:'}
-          </label>
-          <select
-            id="sort-select"
-            value={sortOption}
-            onChange={(e) => setSortOption(e.target.value)}
-          >
-            <option value="">{language === 'ua' ? 'Без сортування' : 'No sorting'}</option>
-            <option value="name">{language === 'ua' ? 'Назвою (А → Я)' : 'Name (A → Z)'}</option>
-            <option value="duration">{language === 'ua' ? 'Тривалістю' : 'Duration'}</option>
-            <option value="difficulty">{language === 'ua' ? 'Складністю' : 'Difficulty'}</option>
-          </select>
-        </div>
-
         <div className="form-buttons">
           <button type="submit">{t.submit[language]}</button>
           <button
@@ -266,7 +277,23 @@ function RouteList() {
           </button>
         </div>
       </form>
-  
+      
+      <div className="sort-controls">
+        <label htmlFor="sort-select">
+          {language === 'ua' ? 'Сортувати за:' : 'Sort by:'}
+        </label>
+        <select
+          id="sort-select"
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+        >
+          <option value="">{language === 'ua' ? 'Без сортування' : 'No sorting'}</option>
+          <option value="name">{language === 'ua' ? 'Назвою (А → Я)' : 'Name (A → Z)'}</option>
+          <option value="duration">{language === 'ua' ? 'Тривалістю' : 'Duration'}</option>
+          <option value="difficulty">{language === 'ua' ? 'Складністю' : 'Difficulty'}</option>
+        </select>
+      </div>
+
       {error && <p className="error-message">{error}</p>}
       {routes.length === 0 && <p className="no-results">{t.noResults[language]}</p>}
       
