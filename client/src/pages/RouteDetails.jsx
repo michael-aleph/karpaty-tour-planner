@@ -121,7 +121,7 @@ function RouteDetails() {
         )}
   
         <div className="route-back">
-          <Link to="/">
+          <Link to="/routes">
             <button>{language === 'ua' ? '← Назад' : '← Back'}</button>
           </Link>
         </div>

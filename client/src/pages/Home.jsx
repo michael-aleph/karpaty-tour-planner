@@ -185,8 +185,8 @@ function Home() {
               </p>
               <p>
                 {language === 'ua'
-                  ? 'Серед доступних тегів ви знайдете як "водоспади", "панорамні краєвиди" чи "лісові стежки", так і специфічні — "для новачків", "з дітьми", "до історичних місць" або "в мальовничу самоту". Оберіть маршрути від коротких прогулянок до справжніх експедицій.'
-                  : 'You can choose from a variety of tags — such as "waterfalls", "panoramic views", or "forest trails" — as well as more specific ones like "beginner-friendly", "with kids", "historical paths", or "secluded escapes". Routes range from short walks to full expeditions.'}
+                  ? 'Серед доступних тегів ви знайдете як "водоспади", "панорамні краєвиди" чи "ліс", "печери", "веломаршрут", та багато іншого. Оберіть маршрути від коротких прогулянок до справжніх експедицій.'
+                  : 'Among the available tags youʼll find "waterfalls", "panoramic view" or "forest", "caves", "bike route", and much more. Routes range from short walks to full expeditions.'}
               </p>
               <p>
                 {language === 'ua'
