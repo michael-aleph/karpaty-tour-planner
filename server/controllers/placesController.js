@@ -48,7 +48,7 @@ exports.updatePlace = async (req, res, next) => {
 
   const { name_ua, name_en, description_ua, description_en, image_url } = req.body;
 
-  const client = await pool.connect();
+  const client = await db.connect();
 
   try {
     await client.query('BEGIN');
