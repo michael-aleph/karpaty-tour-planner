@@ -47,7 +47,7 @@ exports.updateTag = async (req, res, next) => {
 
   const { name_ua, name_en, weight } = req.body;
 
-  const client = await pool.connect();
+  const client = await db.connect();
 
   try {
     await client.query('BEGIN');
